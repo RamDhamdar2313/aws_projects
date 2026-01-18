@@ -1,6 +1,6 @@
-High-level flow
+## High-level flow
 
-1.  Create VPC in **Region A**
+1.  Create VPC in **Ap Region**
 
 2.  Create VPC in **US Region**
 
@@ -19,7 +19,7 @@ No NAT, no Internet Gateway needed for this.
 **Assumptions (adjust if needed)**
 
   --------------------------------------------
-  **Item**         **Region A**  **US Region**
+  **Item**         **AP Region**  **US Region**
   ---------------- ------------- -------------
   Region           ap-south-1    us-east-1
 
@@ -30,9 +30,9 @@ No NAT, no Internet Gateway needed for this.
 
 **CIDR must NOT overlap. If it overlaps, stop immediately.**
 
-**STEP 1 --- Create VPC in Region A**
+**STEP 1 --- Create VPC in AP Region**
 
-1.  Switch to **Region A**
+1.  Switch to **AP Region**
 
 2.  VPC → Create VPC
 
@@ -176,7 +176,7 @@ Launch 3 EC2 instances **in each private subnet**:
 
 **STEP 8 --- Test Connectivity**
 
-From Region A Public- instance:
+From AP Region Public- instance:
 
 ssh \<private-instance-of-ap-Region\> 🡪 ssh the private ip of us-region
 private instance
@@ -192,3 +192,4 @@ height="2.9405916447944005in"}
 
 ![](images/media/image19.png){width="6.268055555555556in"
 height="1.5458333333333334in"}
+

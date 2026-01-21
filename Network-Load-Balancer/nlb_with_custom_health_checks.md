@@ -10,7 +10,7 @@ I implemented an AWS Network Load Balancer (NLB) with customized health checks a
 
 - create 3 instances with the sam econfiguration and using a user-data-script 
 - user-data-script 
-  
+```bash
 #!/bin/bash
 apt update -y
 apt install nginx -y 
@@ -18,7 +18,7 @@ echo "<h1> NLB Practicals </h1> <p> This is launched from </u>$(hostname)</u> </
 echo "This is health check" > /var/www/html/hc.txt
 systemctl enable nginx
 systemctl restart nginx
-
+```
     
 ![](images/media/image1.png)
 

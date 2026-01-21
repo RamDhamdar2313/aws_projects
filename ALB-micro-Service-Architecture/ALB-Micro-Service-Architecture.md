@@ -47,60 +47,41 @@
 **USER DATA (CRITICAL)**
 
 **Home page instances (2 EC2)**
-
+```bash
 #!/bin/bash
-
 apt update -y
-
 apt install nginx -y
-
-echo \"\<h1\>HOME PAGE\</h1\>\<p\>Served from \$(hostname)\</p\>\" \>
-/var/www/html/index.html
-
+echo "<h1>HOME PAGE</h1\><p>Served from $(hostname)\</p>" > /var/www/html/index.html
 systemctl enable nginx
-
 systemctl restart nginx
+```
 
 ![](images/media/image1.png){width="2.2472222222222222in"
 height="9.693055555555556in"}
 
 **Laptop page instances (2 EC2)**
-
+```bash
 #!/bin/bash
-
 apt update -y
-
 apt install nginx -y
-
 mkdir -p /var/www/html/laptop
-
-echo \"\<h1\>LAPTOP PAGE\</h1\>\<p\>Served from \$(hostname)\</p\>\" \>
-/var/www/html/laptop/index.html
-
+echo "<h1>LAPTOP PAGE</h1><p>Served from $(hostname)</p>" > /var/www/html/laptop/index.html
 systemctl enable nginx
-
 systemctl restart nginx
-
+```
 ![](images/media/image2.png){width="2.2472222222222222in"
 height="9.693055555555556in"}
 
 **Mobile page instances (2 EC2)**
-
+```bash
 #!/bin/bash
-
 apt update -y
-
 apt install nginx -y
-
 mkdir -p /var/www/html/mobile
-
-echo \"\<h1\>MOBILE PAGE\</h1\>\<p\>Served from \$(hostname)\</p\>\" \>
-/var/www/html/mobile/index.html
-
+echo "<h1>MOBILE PAGE</h1><p>Served from $(hostname)</p>"> /var/www/html/mobile/index.html
 systemctl enable nginx
-
 systemctl restart nginx
-
+```
 ![](images/media/image3.png){width="6.268055555555556in"
 height="2.8666666666666667in"}
 
@@ -288,3 +269,4 @@ Get **ALB DNS name**, then open:
 > height="2.0319444444444446in"}
 
 Refresh multiple times to confirm load balancing (hostname changes).
+

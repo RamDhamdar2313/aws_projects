@@ -121,6 +121,7 @@ curl http://localhost
 ```
 
 3. Verify **HTTP response** from the instance public IP
+   * ![](images/image2026-01-22-17-51-39.png)
 4. Generate CPU load to test scaling:
 
 ```
@@ -131,6 +132,12 @@ yes > /dev/null &
 6. Observe ASG **scale out/in actions** in **EC2 → Auto Scaling Groups → Activity History**
 ![](images/image2026-01-22-16-54-01.png)
 ![](images/image2026-01-22-16-55-22.png)
+![](images/image2026-01-22-17-44-47.png)
+![](images/image2026-01-22-17-45-45.png)
+![](images/image2026-01-22-17-50-00.png)
+![](images/image2026-01-22-17-50-30.png)
+![](images/image2026-01-22-17-50-56.png)
+![](images/image2026-01-22-17-52-39.png)
 ---
 
 ## Notes

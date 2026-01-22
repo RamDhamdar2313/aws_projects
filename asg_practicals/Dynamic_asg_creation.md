@@ -24,7 +24,7 @@ This setup helps maintain application availability while optimizing cost by auto
 6. **Network Settings**: Open **HTTP (80)** in Security Group
 7. **Advanced Details → User Data**:
 
-```
+```bash
 #!/bin/bash
 apt update -y
 apt install nginx -y
@@ -115,7 +115,7 @@ systemctl start nginx
 1. SSH into one of the instances using your key pair
 2. Check **Nginx service**:
 
-```
+```bash
 systemctl status nginx
 curl http://localhost
 ```
@@ -124,7 +124,7 @@ curl http://localhost
    * ![](images/image2026-01-22-17-51-39.png)
 4. Generate CPU load to test scaling:
 
-```
+```bash
 yes > /dev/null &
 ```
 
@@ -138,6 +138,11 @@ yes > /dev/null &
 ![](images/image2026-01-22-17-50-30.png)
 ![](images/image2026-01-22-17-50-56.png)
 ![](images/image2026-01-22-17-52-39.png)
+
+### Then when the ssh is  closed the load will decrease and the instance will start terminating 
+
+![](images/image2026-01-22-18-37-55.png)
+![](images/image2026-01-22-18-38-51.png)
 ---
 
 ## Notes

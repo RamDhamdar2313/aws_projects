@@ -290,7 +290,7 @@ Metrics will appear in:
 ![](images/image2026-02-05-15-06-06.png)
 ---
 
-### C. Create CloudWatch Alarm (Memory > 50%)
+### C. Create CloudWatch Alarm (Memory > 35 %)
 
 1. Go to **CloudWatch → Alarms → Create alarm**
 2. **Select metric**
@@ -355,7 +355,7 @@ Metrics will appear in:
 * and type this cmd 
   ```
   yes > /dev/null &
-  
+
   ```
 * CLick Enter and Wait for The alarm trigger
 
@@ -363,6 +363,10 @@ Metrics will appear in:
 
 * To trigger the alarm faster you can add more of the above cmds in instance terminal
 * OR change the average time to 1 minute
-* 
+* ![](images/image2026-02-05-15-42-19.png)
+* and here is the mail 
+* ![](images/image2026-02-05-15-42-48.png)
+* And thus the pratical is performed 
+* ![](images/image2026-02-05-16-11-28.png)
 
 

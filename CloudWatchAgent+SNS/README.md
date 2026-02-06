@@ -159,7 +159,7 @@ Run the config wizard:
 sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
 
 # Create config file
-sudo nano /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+sudo vim /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 ```
 ### Basic Configuration Metrics Only
 ```
@@ -313,7 +313,7 @@ Metrics will appear in:
 * Condition:
 
   * **Greater than**
-  * **50**
+  * **35**
 
 ![](images/image2026-02-05-15-11-40.png)
 ---
@@ -353,10 +353,11 @@ Metrics will appear in:
 
 * ssh into the instance 
 * and type this cmd 
+  ```bash
+  sudo apt install -y stress-ng
+  stress-ng --vm 1 --vm-bytes 80% --vm-keep --timeout 10m &
   ```
-  yes > /dev/null &
 
-  ```
 * CLick Enter and Wait for The alarm trigger
 
 ## Successful Message Trigger
@@ -370,3 +371,20 @@ Metrics will appear in:
 * ![](images/image2026-02-05-16-11-28.png)
 
 
+# Displaying EC2-logs into CloudWatch
+
+## Objective 
+
+We will Display the logs in the Cloudwatch location of the logs are at `/var/logs/nginx/access.log` 
+and `/var/log/dmesg` 
+
+* Fist install nginx on the server if not present
+  ```bash
+  sudo apt install nginx -y 
+  ```
+  Verify
+  ```bash
+  curl http://localhost
+  ```
+* Access both the logs file to ee if they contain any logs or not 
+* Edit the `

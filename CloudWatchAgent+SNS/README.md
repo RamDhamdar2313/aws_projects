@@ -126,14 +126,15 @@ The project covers the following key areas:
 
 ## 2️⃣ Configure CloudWatch Agent on Ubuntu EC2
 
-### A. Create IAM Policy (if not already attached)
+### A. Insall Awscli for ubuntu 
 
-If your role has **AdministratorAccess**, you can skip this.
-Otherwise attach:
+First also need to install awscli if you are not on aws-linux
 
-* `CloudWatchAgentServerPolicy`
-
-IAM → Roles → `EC2-Admin-Role` → Attach policy
+```bash
+sudo snap install aws-cli --classic   
+# Verify
+aws s3 ls  
+```
 
 ---
 
@@ -142,9 +143,9 @@ IAM → Roles → `EC2-Admin-Role` → Attach policy
 SSH into the EC2 instance:
 
 ```bash
-sudo apt update
-curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb   
-sudo dpkg -i -E ./amazon-cloudwatch-agent.deb   
+sudo apt update \
+curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/ubuntu/amd64/latest/amazon-cloudwatch-agent.deb  \ 
+sudo dpkg -i -E ./amazon-cloudwatch-agent.deb  
 
 ```
 
@@ -154,12 +155,14 @@ sudo dpkg -i -E ./amazon-cloudwatch-agent.deb
 
 Run the config wizard:
 
-```bash
-# Create config directory
-sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc
+### Create a /config directory where your json file is stored 
 
-# Create config file
-sudo vim /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+```bash
+sudo mkdir /config
+```
+### Create a file in which all the configuration are written 
+```bash
+sudo vim /config/amazon-cloudwatch-agent.json
 ```
 ### Basic Configuration Metrics Only
 ```
@@ -222,41 +225,35 @@ sudo vim /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
 ```bash
 # Start the agent with configuration
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-  -a fetch-config \
-  -m ec2 \
-  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
-  -s
-
-# Expected output:
-# Successfully fetched the config and saved in /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
-# Start configuration validation...
-# Configuration validation first phase succeeded
-# Configuration validation second phase succeeded
-# Configuration validation third phase succeeded
-# Start the agent...
-# Successfully started the CloudWatch agent
+-a fetch-config \
+-m ec2 \
+-c file:/config/amazon-cloudwatch-agent.json \
+-s
 ```
 
-Verify:
+* Expected output:
+* Successfully fetched the config and saved in /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+* Start configuration validation...
+* Configuration validation first phase succeeded
+* Configuration validation second phase succeeded
+* Configuration validation third phase succeeded
+* Start the agent...
+* Successfully started the CloudWatch agent
+
+
+### E. Check agent status
 
 ```bash
-# Check agent status
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+```
+* Expected output:
+ {
+   "status": "running",
+   "starttime": "2024-01-15T10:30:00Z",
+   "version": "1.300030.0"
+ }
 
-# Expected output:
-# {
-#   "status": "running",
-#   "starttime": "2024-01-15T10:30:00Z",
-#   "version": "1.300030.0"
-# }
-```
-## You also need to install awscli if you are not on aws-linux 
-```bash
-sudo snap install aws-cli --classic   
-# Verify
-aws s3 ls  
-```
-### logs chck cmd 
+### logs check cmd 
 ```bash
 cat /var/log/amazon/amazon-cloudwatch-agent/amazon-cloudwatch-agent.log
 ```
@@ -309,7 +306,7 @@ Metrics will appear in:
 ### D. Configure Alarm Conditions
 
 * Statistic: **Average**
-* Period: **5 minutes**
+* Period: **1 minutes**
 * Condition:
 
   * **Greater than**
@@ -386,5 +383,209 @@ and `/var/log/dmesg`
   ```bash
   curl http://localhost
   ```
-* Access both the logs file to ee if they contain any logs or not 
-* Edit the `
+### Access both the logs file to see if they contain any logs or not 
+  * Two logs file first
+   1. /var/log/dmesg --> System logs for the ec2
+   2. /var/log/nginx/access.log --> Nginx log for the Nginx Server
+  * Change the permission to allow the cwagent user to access the log file 
+   ```bash
+  usermod -aG adm cwagent
+  ```
+### Edit the configuration file with 
+```bash
+sudo vim /config/amazon-clouwatch-agent.json
+```
+```json
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "cwagent"
+  },
+  "metrics": {
+    "namespace": "CWAgent",
+    "metrics_collected": {
+      "cpu": {
+        "measurement": [
+          "cpu_usage_idle",
+          "cpu_usage_iowait",
+          "cpu_usage_user",
+          "cpu_usage_system"
+        ],
+        "totalcpu": false
+      },
+      "disk": {
+        "measurement": [
+          "used_percent",
+          "inodes_free"
+        ],
+        "resources": [
+          "*"
+        ]
+      },
+      "diskio": {
+        "measurement": [
+          "io_time"
+        ],
+        "resources": [
+          "*"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          "mem_used_percent",
+          "mem_available_percent"
+        ]
+      },
+      "netstat": {
+        "measurement": [
+          "tcp_established",
+          "tcp_time_wait"
+        ]
+      },
+      "processes": {
+        "measurement": [
+          "running",
+          "sleeping",
+          "dead"
+        ]
+      }
+    }
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "nginx",
+            "log_stream_name": "{instance_id}",
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/dmesg",
+            "log_group_name": "ec2/secure",
+            "log_stream_name": "{instance_id}",
+            "timezone": "UTC"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+* ReConfigure Your CloudWatch Agent with this CMDs
+
+### Start the agent with configuration
+```bash
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+-a append-config \
+-m ec2 \
+-c file:/config/amazon-cloudwatch-agent.json \
+-s
+
+```
+
+### Expected output in CLoudwatch --> Logs --> Log Managements
+
+![](images/image2026-02-08-22-11-54.png)
+
+* Go inside the nginx to see access logs of nginx server
+* Go to ec2/secure to see the logs for ec2 instance
+
+## examples
+![](images/image2026-02-08-22-14-39.png)
+![](images/image2026-02-08-22-15-28.png)
+
+#### Check Agent Status
+
+```bash
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+```
+
+#### View Agent Logs
+
+```bash
+# Agent logs location
+sudo tail -f /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
+```
+
+### 4.5 Troubleshooting
+
+#### Agent Not Starting
+
+**Check IAM permissions:**
+```bash
+# Test IAM role permissions
+aws cloudwatch put-metric-data \
+  --namespace TestNamespace \
+  --metric-name TestMetric \
+  --value 1 \
+  --region us-east-1
+```
+
+**Check agent logs:**
+```bash
+sudo cat /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log
+```
+
+**Verify configuration:**
+```bash
+# Validate configuration
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
+  -s
+```
+
+#### Metrics Not Appearing in CloudWatch
+
+**Wait for metrics:**
+- Metrics appear within 1-2 minutes after agent starts
+- Check namespace: `CWAgent` (or your custom namespace)
+
+**Verify agent is running:**
+```bash
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status
+```
+
+**Check network connectivity:**
+```bash
+# Test CloudWatch endpoint
+curl -I https://monitoring.us-east-1.amazonaws.com
+```
+
+#### Logs Not Appearing
+
+**Check log file permissions:**
+```bash
+# Ensure agent can read log files
+sudo ls -la /var/log/myapp/application.log
+```
+
+**Note – Fixing permissions for `/var/log/nginx/access.log`:**
+
+The CloudWatch agent runs as the `cwagent` user. If collecting nginx access logs, the agent may not have read access. Add `cwagent` to the `adm` group so it can read system logs (including nginx logs that are typically readable by adm):
+
+```bash
+usermod -aG adm cwagent
+```
+
+Then restart the CloudWatch agent for the change to take effect.
+
+**Check log group exists:**
+```bash
+# List log groups
+aws logs describe-log-groups --region us-east-1
+```
+
+**Verify log file path:**
+```bash
+# Ensure file path in config matches actual file
+ls -la /var/log/myapp/application.log
+```
+
+
+
+

@@ -103,7 +103,7 @@ RDS **does not allow setting a hostname directly**.
 Once the DB is created, AWS gives you:
 
 ```
-myapp-mysql-db.abc123xyz.us-east-1.rds.amazonaws.com
+myapp-mysql-db.ckjgcmius5j3.us-east-1.rds.amazonaws.com
 ```
 
 ### Create custom hostname
@@ -228,10 +228,23 @@ db.mycompany.com   (via CNAME)
 
 * Create  an ec2 instance in default VPC and an ubuntu ami
 * Allow MySQL/Aurora 3306 posrt no on the Security Group
+* Install mysql core on ec2 instance via 
+  ```bash
+  sudo apt update
+  sudo apt install mysql-client-core-8.0
+  ```
+* here is cmd to connect to your rds database
+  ```bash
+   mysql -h myapp-mysql-db.ckjgcmius5j3.us-east-1.rds.amazonaws.com -u root -p
 
-```bash
-mysql -h myapp-mysql-db.ckjgcmius5j3.us-east-1.rds -P 3306 -u root -p
-```
+  ```
+  alternatively you can also use this
+
+  ```bash
+  mysql -h myapp-mysql-db.ckjgcmius5j3.us-east-1.rds.amazonaws.com -u root -pXEWR3bL9wZmpxOyyRM4g
+  ```
+* My Password is `XEWR3bL9wZmpxOyyRM4g` 
+  * this method is very insecure and i always recommend to use -p keyword and prompt to use the user to enter the password 
 
 
 
@@ -249,8 +262,7 @@ If this fails:
 ### Connect as master
 
 ```bash
-mysql -h b.mycompany.com -u root -p
-USE appdb;d
+mysql -h myapp-mysql-db.ckjgcmius5j3.us-east-1.rds.amazonaws.com -u root -p
 ```
 
 ---
@@ -293,7 +305,7 @@ FLUSH PRIVILEGES;
 ### Remote user
 
 ```bash
-mysql -h db.mycompany.com -u remote_user -p appdb
+mysql -h  myapp-mysql-db.ckjgcmius5j3.us-east-1.rds.amazonaws.com -u remote_user -p appdb
 ```
 
 ### Local user (from EC2 inside VPC)

@@ -270,10 +270,15 @@ https://rampdhamdar.work.gd
 ```
 
 You should see:
+![](images/image2026-02-11-20-27-22.png)
+![](images/image2026-02-11-20-26-59.png)
+
 
 
 
 🔒 Secure connection
 Certificate issued by Amazon
+
+
 
 

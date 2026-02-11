@@ -279,6 +279,15 @@ You should see:
 🔒 Secure connection
 Certificate issued by Amazon
 
+# Redirect HTTP Traffic to HTTPS
+
+### Go to ALB --> Listner --> HTTP80
+* Select  Default  rule --> Actions --> Edit Rule
+* Select Redirect to URL --> full URL
+* Save Changes
+![](images/image2026-02-11-20-35-22.png)
 
 
+
+ 
 
